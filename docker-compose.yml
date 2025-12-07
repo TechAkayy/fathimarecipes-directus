@@ -48,8 +48,10 @@ services:
   cms:
     container_name: directus
     image: directus/directus:11.13.4
+    env_file:
+      - ./cms/.env
     ports:
-      - ${DIRECTUS_PORT}:8055
+      - '${DIRECTUS_PORT}:8055'
     restart: always
     networks:
       - internal
@@ -111,9 +113,10 @@ services:
     container_name: iles
     profiles: ['prod']
     build: ./frontend
+    working_dir: /app
     ports:
       - '3000:3000'
-      - '5173:5173' # if Vite runs on 5173    working_dir: /app
+      - '5173:5173'
     env_file:
       - ./frontend/.env
     restart: always
@@ -122,8 +125,8 @@ services:
 
   nginx:
     container_name: reverse-proxy
-    image: nginx:latest
     profiles: ['prod']
+    image: nginx:latest
     depends_on:
       - cms
       - frontend

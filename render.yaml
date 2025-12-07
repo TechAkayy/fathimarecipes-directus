@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: frontend
+    env: docker
+    dockerfilePath: ./frontend/Dockerfile
+    plan: free
+    envVars:
+      - key: PORT
+        value: '3000'
+
+  - type: web
+    name: cms
+    env: docker
+    dockerComposeOverride: docker-compose.render.yml
+    envVars:
+      - key: PUBLIC_URL
+        value: https://your-domain.com
+    plan: free
+
+  - type: web
+    name: reverse-proxy
+    env: docker
+    dockerComposeOverride: docker-compose.render.yml
+    plan: free
+    envVars:
+      - key: PORT
+        value: '10000'
+
+  - type: redis
+    name: redis
+    plan: free
+
+  - type: persistent_disk
+    name: uploads_disk
+    mountPath: /directus/uploads
+    sizeGB: 1
+
+  - type: persistent_disk
+    name: extensions_disk
+    mountPath: /directus/extensions
+    sizeGB: 1
+
+  - type: persistent_disk
+    name: db_data
+    mountPath: /var/lib/postgresql/data
+    sizeGB: 1

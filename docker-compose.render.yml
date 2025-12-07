@@ -1,0 +1,52 @@
+services:
+  database:
+    image: postgis/postgis:16-master
+    volumes:
+      - database-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+
+  cache:
+    image: redis:6
+
+  cms:
+    image: directus/directus:11.13.4
+    env_file:
+      - ./cms/.env
+    environment:
+      PUBLIC_URL: ${PUBLIC_URL}
+    volumes:
+      - directus-uploads:/directus/uploads
+      - directus-extensions:/directus/extensions
+
+    # Render automatically exposes one port
+    ports:
+      - '8055'
+
+  frontend:
+    build: ./frontend
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+    ports:
+      - '3000'
+
+  nginx:
+    image: nginx:latest
+    depends_on:
+      - cms
+      - frontend
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - '10000' # INTERNAL Render port (auto-routed)
+    environment:
+      PORT: 10000
+      NODE_ENV: production
+
+volumes:
+  database-data:
+  directus-uploads:
+  directus-extensions:
