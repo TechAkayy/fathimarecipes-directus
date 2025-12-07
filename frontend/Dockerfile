@@ -1,17 +1,16 @@
-FROM node:18-alpine AS build
+# Stage 1 — build
+FROM node:20-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./
 RUN npm install
 
 COPY . .
-RUN npm run build
+RUN npm run build   # creates dist/
 
-FROM node:18-alpine AS runtime
-WORKDIR /app
-
-COPY --from=build /app /app
+# Stage 2 — run static site on Nginx
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 3000
-
-CMD ["npm", "run", "preview", "--", "--port=3000", "--host=0.0.0.0"]
+CMD ["nginx", "-g", "daemon off;"]
