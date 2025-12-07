@@ -1,46 +1,51 @@
 services:
   - type: web
-    name: frontend
+    name: directus
     env: docker
-    dockerfilePath: ./frontend/Dockerfile
-    plan: free
+    dockerfilePath: ./cms/Dockerfile
+    plan: starter
     envVars:
-      - key: PORT
-        value: '3000'
-
-  - type: web
-    name: cms
-    env: docker
-    dockerComposeOverride: docker-compose.render.yml
-    envVars:
+      - key: DB_CLIENT
+        value: pg
+      - key: DB_HOST
+        fromService:
+          name: directus-db
+          property: host
+      - key: DB_PORT
+        value: '5432'
+      - key: DB_DATABASE
+        value: directus
+      - key: DB_USER
+        value: directus
+      - key: DB_PASSWORD
+        fromSecret: db_password
+      - key: REDIS
+        fromService:
+          name: directus-redis
+          property: connectionString
       - key: PUBLIC_URL
-        value: https://your-domain.com
-    plan: free
+        value: https://render.fathimarecipes.com
+    disk:
+      name: uploads
+      mountPath: /directus/uploads
+      sizeGB: 5
 
-  - type: web
-    name: reverse-proxy
+  - type: pserv
+    name: directus-db
     env: docker
-    dockerComposeOverride: docker-compose.render.yml
-    plan: free
+    dockerfilePath: ./cms/db.Dockerfile
+    disk:
+      name: pgdata
+      mountPath: /var/lib/postgresql/data
+      sizeGB: 10
     envVars:
-      - key: PORT
-        value: '10000'
+      - key: POSTGRES_USER
+        value: directus
+      - key: POSTGRES_DB
+        value: directus
+      - key: POSTGRES_PASSWORD
+        fromSecret: db_password
 
   - type: redis
-    name: redis
-    plan: free
-
-  - type: persistent_disk
-    name: uploads_disk
-    mountPath: /directus/uploads
-    sizeGB: 1
-
-  - type: persistent_disk
-    name: extensions_disk
-    mountPath: /directus/extensions
-    sizeGB: 1
-
-  - type: persistent_disk
-    name: db_data
-    mountPath: /var/lib/postgresql/data
-    sizeGB: 1
+    name: directus-redis
+    plan: starter
