@@ -1,3 +1,6 @@
+x-coolify:
+  profiles: ['prod']
+
 name: directus-iles-template
 
 services:
