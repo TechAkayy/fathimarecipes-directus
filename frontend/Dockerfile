@@ -7,9 +7,11 @@ RUN npm install
 
 COPY . .
 
-# Build SSR app
+# Build Iles site
 RUN npm run build
 
+# Expose the port your preview server uses
 EXPOSE 3000
 
-CMD ["npm", "run", "build"]
+# Start the production preview server
+CMD ["npm", "run", "preview"]
