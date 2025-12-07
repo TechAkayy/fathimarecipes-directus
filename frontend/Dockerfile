@@ -5,6 +5,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
+RUN rm -rf node_modules/.vite .vite .cache
+
 COPY . .
 RUN npm run build   # creates /app/dist
 

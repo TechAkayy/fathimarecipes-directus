@@ -4,6 +4,6 @@
     "cms": "npm run cms:down && npm run cms:up",
     "cms:up": "docker compose up database cache cms",
     "cms:down": "docker-compose down -v",
-    "build": "docker-compose up"
+    "build": "npm run cms:down && docker-compose up"
   }
 }
