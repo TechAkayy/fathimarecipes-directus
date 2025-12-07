@@ -46,3 +46,4 @@ components.d.ts
 composables.d.ts
 ## rollup visualizer
 stats.html
+.env.prod
