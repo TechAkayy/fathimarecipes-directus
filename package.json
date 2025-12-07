@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "cd frontend && npm run dev",
+    "dev": "npm run cms && cd frontend && npm run dev",
     "cms": "npm run cms:down && npm run cms:up",
     "cms:up": "docker compose up -d database cache cms",
     "cms:down": "docker-compose down -v",
