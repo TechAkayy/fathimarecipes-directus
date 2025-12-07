@@ -1,23 +1,61 @@
+# =====================================================
+# RENDER BLUEPRINT for Directus + Nuxt/iIes Frontend
+# Uses:
+# - Render-managed PostgreSQL (replacement for your PostGIS)
+# - Render-managed Redis
+# - Docker-built Directus
+# - Docker-built Frontend
+# =====================================================
+
 services:
-  - type: pserv
-    name: database
-    envVars:
-      - fromGroup: cms
-
-  - type: redis
-    name: cache
-
-  - type: web
-    name: directus
-    envVars:
-      - fromGroup: cms
+  # ---------------------------------------------------
+  # DIRECTUS CMS
+  # ---------------------------------------------------
+  - name: directus
+    type: web
+    env: docker
+    dockerfilePath: ./cms/Dockerfile
     plan: starter
-    buildCommand: ''
-    startCommand: 'npx directus start'
+    region: singapore
+    autoDeploy: true
+    envVars:
+      - fromGroup: cms
+      - key: DATABASE_URL
+        fromService:
+          name: directus-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: directus-cache
+          property: connectionString
 
-  - type: web
-    name: frontend
+  # ---------------------------------------------------
+  # FRONTEND (Nuxt / Iles)
+  # ---------------------------------------------------
+  - name: frontend
+    type: web
+    env: docker
+    dockerfilePath: ./frontend/Dockerfile
+    plan: starter
+    region: singapore
+    autoDeploy: true
     envVars:
       - fromGroup: frontend
-    buildCommand: 'npm install && npm run build'
-    startCommand: 'npm run preview'
+
+# -----------------------------------------------------
+# POSTGRES (Render-managed)
+# -----------------------------------------------------
+databases:
+  - name: directus-db
+    plan: starter
+    region: singapore
+    ipAllowList: []   # private access only
+
+# -----------------------------------------------------
+# REDIS (Render-managed)
+# -----------------------------------------------------
+services:
+  - name: directus-cache
+    type: redis
+    plan: starter
+    region: singapore
