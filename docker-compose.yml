@@ -38,10 +38,16 @@ services:
     env_file:
       - ./cms/.env
     ports:
-      - '${DIRECTUS_PORT}:8055'
+      - '${DIRECTUS_PORT:-8055}:8055'
     restart: always
     networks:
       - internal
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.cms.rule: 'Host(`cms.fathimarecipes.com`)'
+      traefik.http.routers.cms.entrypoints: 'websecure'
+      traefik.http.routers.cms.tls: 'true'
+      traefik.http.services.cms.loadbalancer.server.port: '8055'
     depends_on:
       database:
         condition: service_healthy
@@ -106,6 +112,12 @@ services:
     restart: always
     networks:
       - internal
+    labels:
+      traefik.enable: 'true'
+      traefik.http.routers.frontend.rule: 'Host(`frontend.fathimarecipes.com`)'
+      traefik.http.routers.frontend.entrypoints: 'websecure'
+      traefik.http.routers.frontend.tls: 'true'
+      traefik.http.services.frontend.loadbalancer.server.port: '80'
 
 networks:
   internal:
