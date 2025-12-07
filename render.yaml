@@ -1,51 +1,23 @@
 services:
-  - type: web
-    name: directus
-    env: docker
-    dockerfilePath: ./cms/Dockerfile
-    plan: starter
-    envVars:
-      - key: DB_CLIENT
-        value: pg
-      - key: DB_HOST
-        fromService:
-          name: directus-db
-          property: host
-      - key: DB_PORT
-        value: '5432'
-      - key: DB_DATABASE
-        value: directus
-      - key: DB_USER
-        value: directus
-      - key: DB_PASSWORD
-        fromSecret: db_password
-      - key: REDIS
-        fromService:
-          name: directus-redis
-          property: connectionString
-      - key: PUBLIC_URL
-        value: https://render.fathimarecipes.com
-    disk:
-      name: uploads
-      mountPath: /directus/uploads
-      sizeGB: 5
-
   - type: pserv
-    name: directus-db
-    env: docker
-    dockerfilePath: ./cms/db.Dockerfile
-    disk:
-      name: pgdata
-      mountPath: /var/lib/postgresql/data
-      sizeGB: 10
+    name: database
     envVars:
-      - key: POSTGRES_USER
-        value: directus
-      - key: POSTGRES_DB
-        value: directus
-      - key: POSTGRES_PASSWORD
-        fromSecret: db_password
+      - fromGroup: cms
 
   - type: redis
-    name: directus-redis
+    name: cache
+
+  - type: web
+    name: directus
+    envVars:
+      - fromGroup: cms
     plan: starter
+    buildCommand: ''
+    startCommand: 'npx directus start'
+
+  - type: web
+    name: frontend
+    envVars:
+      - fromGroup: frontend
+    buildCommand: 'npm install && npm run build'
+    startCommand: 'npm run preview'
