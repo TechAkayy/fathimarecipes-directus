@@ -1,17 +1,17 @@
-FROM node:18-alpine
-
+FROM node:18-alpine AS build
 WORKDIR /app
 
 COPY package*.json ./
 RUN npm install
 
 COPY . .
-
-# Build Iles site
 RUN npm run build
 
-# Expose the port your preview server uses
+FROM node:18-alpine AS runtime
+WORKDIR /app
+
+COPY --from=build /app /app
+
 EXPOSE 3000
 
-# Start the production preview server
-CMD ["npm", "run", "preview"]
+CMD ["npm", "run", "preview", "--", "--port", "3000", "--host", "0.0.0.0"]
