@@ -105,8 +105,7 @@ services:
     build: ./frontend
     working_dir: /app
     ports:
-      - '3000:3000'
-      - '5173:5173'
+      - '3000:80'
     env_file:
       - ./frontend/.env
     restart: always
