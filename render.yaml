@@ -54,7 +54,7 @@ databases:
 # -----------------------------------------------------
 # REDIS (Render-managed)
 # -----------------------------------------------------
-caches:
+cache:
   - name: directus-cache
     type: redis
     plan: starter
