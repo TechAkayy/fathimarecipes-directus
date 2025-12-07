@@ -49,12 +49,12 @@ databases:
   - name: directus-db
     plan: starter
     region: singapore
-    ipAllowList: []   # private access only
+    ipAllowList: [] # private access only
 
 # -----------------------------------------------------
 # REDIS (Render-managed)
 # -----------------------------------------------------
-services:
+caches:
   - name: directus-cache
     type: redis
     plan: starter
