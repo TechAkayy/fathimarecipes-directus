@@ -22,9 +22,9 @@ services:
 
   cache:
     image: redis:6
+    restart: always
     networks:
       - internal
-    restart: always
     healthcheck:
       test: ['CMD-SHELL', "[ $$(redis-cli ping) = 'PONG' ]"]
       interval: 10s
@@ -34,20 +34,13 @@ services:
 
   cms:
     image: directus/directus:11.13.4
-    container_name: directus
     env_file:
       - ./cms/.env
-    ports:
-      - '${DIRECTUS_PORT:-8055}:8055'
+    expose:
+      - '8055'
     restart: always
     networks:
       - internal
-    labels:
-      traefik.enable: 'true'
-      traefik.http.routers.cms.rule: 'Host(`cms.fathimarecipes.com`)'
-      traefik.http.routers.cms.entrypoints: 'websecure'
-      traefik.http.routers.cms.tls: 'true'
-      traefik.http.services.cms.loadbalancer.server.port: '8055'
     depends_on:
       database:
         condition: service_healthy
