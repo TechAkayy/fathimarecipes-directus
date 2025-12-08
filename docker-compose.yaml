@@ -94,6 +94,10 @@ services:
       EMAIL_SMTP_USER: ${EMAIL_SMTP_USER}
       EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD}
 
+    labels:
+      - coolify.managed=true
+      - 'caddy_0.reverse_proxy={{upstreams 8055}}'
+
 networks:
   internal:
     driver: bridge
