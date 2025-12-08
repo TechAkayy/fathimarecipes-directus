@@ -1,9 +1,7 @@
 {
   "scripts": {
-    "dev": "npm run cms && cd frontend && npm run dev",
-    "cms": "npm run cms:down && npm run cms:up",
-    "cms:up": "docker compose up -d database cache cms",
-    "cms:down": "docker-compose down -v",
-    "build": "npm run cms && cd frontend && npm run now"
+    "dev": "npm run cms:down && npm run cms:up",
+    "cms:up": "docker-compose up",
+    "cms:down": "docker-compose down -v"
   }
 }

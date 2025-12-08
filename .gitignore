@@ -31,6 +31,8 @@ dist-ssr
 
 .iles-ssg-temp/
 
+cms/*
+
 # Pinegrow
 _pgbackup
 _pginfo
