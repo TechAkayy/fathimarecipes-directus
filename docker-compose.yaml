@@ -41,11 +41,6 @@ services:
     labels:
       caddy: 'cms.fathimarecipes.com'
       caddy.reverse_proxy: '{{upstreams 8055}}'
-      traefik.enable: 'true'
-      traefik.http.routers.cms.rule: 'Host(`cms.fathimarecipes.com`)'
-      traefik.http.routers.cms.entrypoints: 'websecure'
-      traefik.http.routers.cms.tls: 'true'
-      traefik.http.services.cms.loadbalancer.server.port: '8055'
   postgresql:
     image: postgis/postgis:16-3.4-alpine
     platform: linux/amd64
